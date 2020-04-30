@@ -1,18 +1,21 @@
-package siit.proiectfinal.booking_system.model;
+package siit.proiectfinal.booking_system.domain.entity;
 
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Reservation extends Base{
+@EqualsAndHashCode
+public class Reservation {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Integer id;
 
     @Column
     private LocalDate checkInDate;

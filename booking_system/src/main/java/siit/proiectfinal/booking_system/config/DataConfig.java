@@ -1,5 +1,6 @@
 package siit.proiectfinal.booking_system.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -20,6 +21,11 @@ public class DataConfig {
 //        dataSource.setSchema("admin");
 
         return dataSource;
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
 

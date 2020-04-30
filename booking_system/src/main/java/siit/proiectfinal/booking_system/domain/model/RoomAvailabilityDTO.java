@@ -1,33 +1,27 @@
-package siit.proiectfinal.booking_system.model;
+package siit.proiectfinal.booking_system.domain.model;
 
 import lombok.*;
-
+import siit.proiectfinal.booking_system.domain.entity.RoomAvailabilityStatus;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Entity
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class RoomAvailability extends Base  {
+@EqualsAndHashCode
+public class RoomAvailabilityDTO{
 
-    @Column
+
+    private Integer id;
     private LocalDate reservationDate;
 
     @Enumerated(EnumType.STRING)
     private RoomAvailabilityStatus roomAvailabilityStatus;
 
-    @NotNull
-    @Column
     private BigDecimal rentPricePerNight;
-
-    @ManyToOne
-    private Room room;
-
-
+    private RoomDTO room;
 
 }

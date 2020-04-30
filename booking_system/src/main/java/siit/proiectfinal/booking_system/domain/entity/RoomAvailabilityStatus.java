@@ -1,4 +1,4 @@
-package siit.proiectfinal.booking_system.model;
+package siit.proiectfinal.booking_system.domain.entity;
 
 public enum RoomAvailabilityStatus {
 

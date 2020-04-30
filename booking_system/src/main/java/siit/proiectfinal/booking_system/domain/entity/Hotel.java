@@ -1,4 +1,4 @@
-package siit.proiectfinal.booking_system.model;
+package siit.proiectfinal.booking_system.domain.entity;
 
 import lombok.*;
 
@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,15 +14,18 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Hotel extends Base{
+public class Hotel {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Integer id;
 
     @Size(max=100)
     @NotBlank
     @Column
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private City city;
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)

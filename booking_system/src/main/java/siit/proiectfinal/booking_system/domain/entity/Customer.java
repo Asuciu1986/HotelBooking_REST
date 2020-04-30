@@ -1,12 +1,11 @@
-package siit.proiectfinal.booking_system.model;
+package siit.proiectfinal.booking_system.domain.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +14,12 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Customer extends Base{
+@EqualsAndHashCode
+public class Customer{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Integer id;
 
     @Column
     private String firstName;
@@ -25,7 +28,16 @@ public class Customer extends Base{
     private String lastName;
 
     @Column
+    private String password;
+
+    @Column
     private LocalDate birthDate;
+
+    @Column
+    private LocalDateTime joiningDate;
+
+    @Column
+    private LocalDateTime editingDate;
 
     @Column
     private String countryOfResidence;

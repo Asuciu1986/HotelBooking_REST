@@ -1,4 +1,4 @@
-package siit.proiectfinal.booking_system.model;
+package siit.proiectfinal.booking_system.domain.entity;
 
 import lombok.*;
 
@@ -13,14 +13,18 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class Room extends Base {
+@EqualsAndHashCode
+public class Room {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Integer id;
 
     @NotNull
     @Column
     private Integer roomNumber;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Hotel hotel;
 
     @Column
@@ -31,6 +35,6 @@ public class Room extends Base {
     private Integer personCapacity;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "room", orphanRemoval = true)
-    private List<RoomAvailability> availabilities = new ArrayList<>();
+    private List<RoomAvailability> availabilities;
 
 }
