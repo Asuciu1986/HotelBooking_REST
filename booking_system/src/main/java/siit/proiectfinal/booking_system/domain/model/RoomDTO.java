@@ -1,5 +1,8 @@
 package siit.proiectfinal.booking_system.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +11,18 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class RoomDTO {
 
     private Integer id;
     private Integer roomNumber;
+
+    @JsonBackReference
     private HotelDTO hotel;
+
     private Integer size;
     private Integer personCapacity;
+
+    @JsonManagedReference
     private List<RoomAvailabilityDTO> availabilities = new ArrayList<>();
 
 }

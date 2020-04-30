@@ -1,18 +1,27 @@
 package siit.proiectfinal.booking_system.controller;
 
+import com.sun.javafx.collections.ImmutableObservableList;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import siit.proiectfinal.booking_system.domain.entity.City;
+import siit.proiectfinal.booking_system.domain.entity.Customer;
 import siit.proiectfinal.booking_system.domain.entity.Room;
 import siit.proiectfinal.booking_system.domain.entity.RoomAvailability;
+import siit.proiectfinal.booking_system.domain.model.CustomerDTO;
 import siit.proiectfinal.booking_system.domain.model.RoomAvailabilityDTO;
+import siit.proiectfinal.booking_system.domain.model.RoomAvailabilityUpdateDTO;
 import siit.proiectfinal.booking_system.domain.model.RoomDTO;
+import siit.proiectfinal.booking_system.exception.CustomerNotFoundException;
+import siit.proiectfinal.booking_system.exception.RoomAvailabilityException;
 import siit.proiectfinal.booking_system.service.RoomAvailabilityService;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,18 +39,93 @@ public class RoomAvailabilityController {
         this.roomAvailabilityService = roomAvailabilityService;
     }
 
-    @GetMapping("/{id}")
-    public RoomAvailability getAvailableRooms(@PathVariable(name = "id") int id){
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<RoomAvailabilityDTO> getAllRoomAvailabilities() {
 
-        return roomAvailabilityService.getById(id);
-    }
-
-    @GetMapping("/{reservationDate}/{cityName}")
-    public List<RoomDTO> getAvailableRooms(@PathVariable(name = "reservationDate") LocalDate reservationDate, @PathVariable(name = "cityName") String cityName){
-
-        List<Room> availableRooms = roomAvailabilityService.getAvailableRoomsByDateAndCityName(reservationDate,cityName);
-        return availableRooms.stream()
-                .map(x -> modelMapper.map(x,RoomDTO.class))
+        return roomAvailabilityService.getAllAvailableRooms().stream()
+                .map(x -> modelMapper.map(x, RoomAvailabilityDTO.class))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public RoomAvailabilityDTO getAvailableRoomById(@PathVariable(name = "id") int id) {
+
+        return modelMapper.map(roomAvailabilityService.getById(id),RoomAvailabilityDTO.class);
+    }
+
+    @GetMapping("/filterDateCity")
+    @ResponseStatus(HttpStatus.OK)
+    public List<RoomDTO> getAvailableRoomsByDateAndCity(@RequestParam(name = "reservationDate")
+                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reservationDate,
+                                                        @RequestParam(name = "cityName") String cityName) {
+
+        List<Room> availableRooms = roomAvailabilityService.getAvailableRoomsByDateAndCityName(reservationDate, cityName);
+        return availableRooms.stream()
+                .map(x -> modelMapper.map(x, RoomDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public RoomAvailabilityDTO createdRoomAvailability (@RequestBody RoomAvailabilityDTO roomAvailabilityDTO) {
+        RoomAvailability roomAvailability = modelMapper.map(roomAvailabilityDTO, RoomAvailability.class);
+        RoomAvailability createdRoomAvailability = roomAvailabilityService.updateRoomAvailability(roomAvailability);
+        return modelMapper.map(createdRoomAvailability, RoomAvailabilityDTO.class);
+    }
+
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RoomAvailabilityDTO updateRoomAvailability (@PathVariable(name="id") int id, @RequestBody RoomAvailabilityDTO roomAvailabilityDTO) {
+        roomAvailabilityDTO.setId(id);
+        RoomAvailability roomAvailability = modelMapper.map(roomAvailabilityDTO, RoomAvailability.class);
+        RoomAvailability updatedRoomAvailability = roomAvailabilityService.updateRoomAvailability(roomAvailability);
+        return modelMapper.map(updatedRoomAvailability, RoomAvailabilityDTO.class);
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RoomAvailabilityDTO updateRoomAvailability(@PathVariable(name="id") int id, @RequestBody RoomAvailabilityUpdateDTO roomPatch){
+
+        roomPatch.setId(id);
+
+        try {
+            RoomAvailability roomAvailability = roomAvailabilityService.getById(id);
+            modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+            modelMapper.map(roomPatch,roomAvailability);
+            RoomAvailability updatedRoomAvailability = roomAvailabilityService.updateRoomAvailability(roomAvailability);
+            return modelMapper.map(updatedRoomAvailability,RoomAvailabilityDTO.class);
+        } catch (RoomAvailabilityException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Roomavailability not found");
+        }
+    }
+
+    @GetMapping("/filterDateCityPersonCapacity")
+    @ResponseStatus(HttpStatus.OK)
+    public List<RoomDTO> getAvailableRoomsByDateCityAndPersonCapacity(@RequestParam(name = "reservationDate")
+                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reservationDate,
+                                                                      @RequestParam(name = "cityName") String cityName,
+                                                                      @RequestParam(name = "personCapacity") int personCapacity) {
+
+        List<Room> availableRooms = roomAvailabilityService.getAvailableRoomsByDateCityNameAndPersonCapacity(reservationDate, cityName, personCapacity);
+        return availableRooms.stream()
+                .map(x -> modelMapper.map(x, RoomDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @PostMapping("createList")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<RoomAvailabilityDTO> addAvailabilityForExistingRoomsInAnInterval(@RequestParam(name = "startDate")
+                                                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                                 @RequestParam(name = "endDate")
+                                                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate){
+        List<RoomAvailability> roomAvailabilitiesList = roomAvailabilityService.addAvailabilityToAllExistingRoomsByDateInterval(startDate,endDate);
+        return roomAvailabilitiesList.stream().map(x -> modelMapper.map(x,RoomAvailabilityDTO.class)).collect(Collectors.toList());
+    }
+
+
+
+
 }

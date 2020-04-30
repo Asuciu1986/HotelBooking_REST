@@ -1,0 +1,6 @@
+INSERT INTO public.room_availability (id, rent_price_per_night, reservation_date, room_availability_status, room) VALUES (190, 100.00, '2020-04-30', 'AVAILABLE', 16);
+INSERT INTO public.room_availability (id, rent_price_per_night, reservation_date, room_availability_status, room) VALUES (191, 100.00, '2020-04-30', 'AVAILABLE', 17);
+INSERT INTO public.room_availability (id, rent_price_per_night, reservation_date, room_availability_status, room) VALUES (192, 100.00, '2020-04-30', 'AVAILABLE', 19);
+INSERT INTO public.room_availability (id, rent_price_per_night, reservation_date, room_availability_status, room) VALUES (193, 100.00, '2020-04-30', 'UNAVAILABLE', 20);
+INSERT INTO public.room_availability (id, rent_price_per_night, reservation_date, room_availability_status, room) VALUES (194, 100.00, '2020-04-30', 'AVAILABLE', 23);
+INSERT INTO public.room_availability (id, rent_price_per_night, reservation_date, room_availability_status, room) VALUES (195, 100.00, '2020-04-30', 'AVAILABLE', 24);

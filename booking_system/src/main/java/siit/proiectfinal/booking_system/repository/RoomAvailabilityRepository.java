@@ -10,4 +10,5 @@ import java.util.List;
 public interface RoomAvailabilityRepository extends JpaRepository<RoomAvailability,Integer> {
 
     List<RoomAvailability> findAllByReservationDateAndRoomAvailabilityStatus(LocalDate reservationDate, RoomAvailabilityStatus roomAvailabilityStatus);
+    List<RoomAvailability> findAllByReservationDateBetween(LocalDate startDate, LocalDate endDate);
 }
