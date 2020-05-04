@@ -18,7 +18,7 @@ public class HotelDTO {
     private String name;
 //
 //    @JsonManagedReference
-    private CityDTO city;
+    private Integer cityId;
 
 //    @JsonIgnore
 //    private Set<RoomDTO> rooms;

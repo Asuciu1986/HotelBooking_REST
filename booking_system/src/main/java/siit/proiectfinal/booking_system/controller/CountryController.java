@@ -1,9 +1,8 @@
 package siit.proiectfinal.booking_system.controller;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import siit.proiectfinal.booking_system.domain.mapper.CountryMapper;
 import siit.proiectfinal.booking_system.domain.model.CountryDTO;
 import siit.proiectfinal.booking_system.exception.CountryNotFoundException;
 import siit.proiectfinal.booking_system.domain.entity.Country;
@@ -22,24 +21,23 @@ import java.util.stream.Collectors;
 public class CountryController {
 
     private final CountryService countryService;
+    private final CountryMapper countryMapper;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
-    public CountryController(CountryService countryService) {
+    public CountryController(CountryService countryService, CountryMapper countryMapper) {
         this.countryService = countryService;
+        this.countryMapper = countryMapper;
     }
 
     @GetMapping(value = "/{id}")
     public CountryDTO getCountry(@PathVariable(name = "id") int countryId) {
-        return convertToDto(countryService.getCountryById(countryId));
+        return countryMapper.toDTO(countryService.getCountryById(countryId));
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<CountryDTO> getCountries() {
         List<Country> countries = countryService.getCountries();
-        return countries.stream().map(this::convertToDto).collect(Collectors.toList());
+        return countries.stream().map(countryMapper::toDTO).collect(Collectors.toList());
     }
 
     @DeleteMapping("/{id}")
@@ -51,16 +49,16 @@ public class CountryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CountryDTO createCountry(@RequestBody @Valid CountryDTO countryDTO) throws ParseException {
-        Country country = convertToEntity(countryDTO);
+        Country country = countryMapper.toEntity(countryDTO);
         Country countryCreated = countryService.createCountry(country);
-        return convertToDto(countryCreated);
+        return countryMapper.toDTO(countryCreated);
     }
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateCountry(@RequestBody @Valid CountryDTO countryDTO) throws ParseException {
-        Country country = convertToEntity(countryDTO);
-        countryService.updateCountry(country);
+    public CountryDTO updateCountry(@RequestBody @Valid CountryDTO countryDTO) throws ParseException {
+        Country country = countryMapper.toEntity(countryDTO);
+        return countryMapper.toDTO(countryService.updateCountry(country));
     }
 
     @ExceptionHandler(ValidationException.class)
@@ -73,12 +71,4 @@ public class CountryController {
         response.sendError(HttpStatus.NOT_FOUND.value());
     }
 
-    private CountryDTO convertToDto(Country country) {
-        return modelMapper.map(country, CountryDTO.class);
-    }
-
-    private Country convertToEntity(CountryDTO countryDTO) throws ParseException {
-        Country country = modelMapper.map(countryDTO, Country.class);
-        return country;
-    }
 }

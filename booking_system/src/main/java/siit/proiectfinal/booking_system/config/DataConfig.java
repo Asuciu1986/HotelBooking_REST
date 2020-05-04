@@ -15,7 +15,7 @@ public class DataConfig {
 
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/booking_system");
+        dataSource.setUrl("jdbc:postgresql://localhost:5434/booking_system");
         dataSource.setUsername("alex");
         dataSource.setPassword("alex");
 //        dataSource.setSchema("admin");

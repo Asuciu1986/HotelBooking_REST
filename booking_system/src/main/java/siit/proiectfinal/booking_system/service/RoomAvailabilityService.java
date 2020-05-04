@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import siit.proiectfinal.booking_system.domain.entity.Room;
 import siit.proiectfinal.booking_system.domain.entity.RoomAvailability;
 import siit.proiectfinal.booking_system.domain.entity.RoomAvailabilityStatus;
+import siit.proiectfinal.booking_system.domain.model.RoomAvailabilityUpdateDTO;
+import siit.proiectfinal.booking_system.exception.RoomAvailabilityException;
 import siit.proiectfinal.booking_system.repository.CityRepository;
 import siit.proiectfinal.booking_system.repository.HotelRepository;
 import siit.proiectfinal.booking_system.repository.RoomAvailabilityRepository;
@@ -57,6 +59,17 @@ public class RoomAvailabilityService {
 
     public RoomAvailability updateRoomAvailability(RoomAvailability roomAvailability) {
         return roomAvailabilityRepository.save(roomAvailability);
+    }
+
+    public RoomAvailability partialUpdate(RoomAvailability roomAvailability){
+        RoomAvailability roomAvailability1 = roomAvailabilityRepository.findById(roomAvailability.getId()).orElseThrow(() -> new RoomAvailabilityException("RoomAvailalable inexistent"));
+        if(roomAvailability.getRentPricePerNight()!=null){
+            roomAvailability1.setRentPricePerNight(roomAvailability.getRentPricePerNight());
+        }
+        if(!roomAvailability1.getRoomAvailabilityStatus().equals(roomAvailability.getRoomAvailabilityStatus())){
+            roomAvailability1.setRoomAvailabilityStatus(roomAvailability.getRoomAvailabilityStatus());
+        }
+        return roomAvailabilityRepository.save(roomAvailability1);
     }
 
     //only for testing purposes

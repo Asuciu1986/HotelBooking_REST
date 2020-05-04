@@ -13,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import siit.proiectfinal.booking_system.domain.entity.*;
+import siit.proiectfinal.booking_system.domain.mapper.RoomAvailabilityMapper;
+import siit.proiectfinal.booking_system.domain.mapper.RoomAvailabilityUpdateMapper;
+import siit.proiectfinal.booking_system.domain.mapper.RoomMapper;
 import siit.proiectfinal.booking_system.domain.model.*;
 import siit.proiectfinal.booking_system.exception.CustomerNotFoundException;
 import siit.proiectfinal.booking_system.exception.RoomAvailabilityException;
@@ -29,12 +32,15 @@ import java.util.stream.Collectors;
 public class RoomAvailabilityController {
 
     private final RoomAvailabilityService roomAvailabilityService;
+    private final RoomAvailabilityMapper roomAvailabilityMapper;
+    private final RoomMapper roomMapper;
+    private final RoomAvailabilityUpdateMapper roomAvailabilityUpdateMapper;
 
-    @Autowired
-    ModelMapper modelMapper;
-
-    public RoomAvailabilityController(RoomAvailabilityService roomAvailabilityService) {
+    public RoomAvailabilityController(RoomAvailabilityService roomAvailabilityService, RoomAvailabilityMapper roomAvailabilityMapper, RoomMapper roomMapper, RoomAvailabilityUpdateMapper roomAvailabilityUpdateMapper) {
         this.roomAvailabilityService = roomAvailabilityService;
+        this.roomAvailabilityMapper = roomAvailabilityMapper;
+        this.roomMapper = roomMapper;
+        this.roomAvailabilityUpdateMapper = roomAvailabilityUpdateMapper;
     }
 
     @GetMapping
@@ -42,7 +48,7 @@ public class RoomAvailabilityController {
     public List<RoomAvailabilityDTO> getAllRoomAvailabilities() {
 
         return roomAvailabilityService.getAllAvailableRooms().stream()
-                .map(x -> modelMapper.map(x, RoomAvailabilityDTO.class))
+                .map(roomAvailabilityMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -50,7 +56,7 @@ public class RoomAvailabilityController {
     @ResponseStatus(HttpStatus.OK)
     public RoomAvailabilityDTO getAvailableRoomById(@PathVariable(name = "id") int id) {
 
-        return modelMapper.map(roomAvailabilityService.getById(id), RoomAvailabilityDTO.class);
+        return roomAvailabilityMapper.toDTO(roomAvailabilityService.getById(id));
     }
 
     @GetMapping("/filterDateCity")
@@ -61,16 +67,16 @@ public class RoomAvailabilityController {
 
         List<Room> availableRooms = roomAvailabilityService.getAvailableRoomsByDateAndCityName(reservationDate, cityName);
         return availableRooms.stream()
-                .map(x -> modelMapper.map(x, RoomDTO.class))
+                .map(roomMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RoomAvailabilityDTO createdRoomAvailability(@RequestBody RoomAvailabilityDTO roomAvailabilityDTO) {
-        RoomAvailability roomAvailability = modelMapper.map(roomAvailabilityDTO, RoomAvailability.class);
+        RoomAvailability roomAvailability = roomAvailabilityMapper.toEntity(roomAvailabilityDTO);
         RoomAvailability createdRoomAvailability = roomAvailabilityService.updateRoomAvailability(roomAvailability);
-        return modelMapper.map(createdRoomAvailability, RoomAvailabilityDTO.class);
+        return roomAvailabilityMapper.toDTO(createdRoomAvailability);
     }
 
 
@@ -78,9 +84,9 @@ public class RoomAvailabilityController {
     @ResponseStatus(HttpStatus.CREATED)
     public RoomAvailabilityDTO updateRoomAvailability(@PathVariable(name = "id") int id, @RequestBody RoomAvailabilityDTO roomAvailabilityDTO) {
         roomAvailabilityDTO.setId(id);
-        RoomAvailability roomAvailability = modelMapper.map(roomAvailabilityDTO, RoomAvailability.class);
+        RoomAvailability roomAvailability = roomAvailabilityMapper.toEntity(roomAvailabilityDTO);
         RoomAvailability updatedRoomAvailability = roomAvailabilityService.updateRoomAvailability(roomAvailability);
-        return modelMapper.map(updatedRoomAvailability, RoomAvailabilityDTO.class);
+        return roomAvailabilityMapper.toDTO(updatedRoomAvailability);
     }
 
     @PatchMapping("/{id}")
@@ -90,11 +96,9 @@ public class RoomAvailabilityController {
         roomPatch.setId(id);
 
         try {
-            RoomAvailability roomAvailability = roomAvailabilityService.getById(id);
-            modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
-            modelMapper.map(roomPatch, roomAvailability);
-            RoomAvailability updatedRoomAvailability = roomAvailabilityService.updateRoomAvailability(roomAvailability);
-            return modelMapper.map(updatedRoomAvailability, RoomAvailabilityDTO.class);
+            RoomAvailability roomAvailability1 = roomAvailabilityUpdateMapper.toEntity(roomPatch);
+            RoomAvailability updatedRoomAvailability = roomAvailabilityService.partialUpdate(roomAvailability1);
+            return roomAvailabilityMapper.toDTO(updatedRoomAvailability);
         } catch (RoomAvailabilityException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Roomavailability not found");
         }
@@ -109,7 +113,7 @@ public class RoomAvailabilityController {
 
         List<Room> availableRooms = roomAvailabilityService.getAvailableRoomsByDateCityNameAndPersonCapacity(reservationDate, cityName, personCapacity);
         return availableRooms.stream()
-                .map(x -> modelMapper.map(x, RoomDTO.class))
+                .map(roomMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -120,7 +124,7 @@ public class RoomAvailabilityController {
                                                                                  @RequestParam(name = "endDate")
                                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         List<RoomAvailability> roomAvailabilitiesList = roomAvailabilityService.addAvailabilityToAllExistingRoomsByDateInterval(startDate, endDate);
-        return roomAvailabilitiesList.stream().map(x -> modelMapper.map(x, RoomAvailabilityDTO.class)).collect(Collectors.toList());
+        return roomAvailabilitiesList.stream().map(roomAvailabilityMapper::toDTO).collect(Collectors.toList());
     }
 
 //    private RoomAvailability mapToEntity(RoomAvailabilityDTO roomAvailabilityDTO) throws ParseException {
@@ -133,16 +137,5 @@ public class RoomAvailabilityController {
 //                    }
 //                });
 //    }
-
-
-    private CountryDTO convertToDto(Country country) {
-        return modelMapper.map(country, CountryDTO.class);
-    }
-
-    private Country convertToEntity(CountryDTO countryDTO) throws ParseException {
-        Country country = modelMapper.map(countryDTO, Country.class);
-        return country;
-    }
-
 
 }

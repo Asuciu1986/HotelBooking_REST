@@ -18,8 +18,7 @@ public class RoomAvailabilityDTO{
     private Integer id;
     private LocalDate reservationDate;
 
-    @Enumerated(EnumType.STRING)
-    private RoomAvailabilityStatus roomAvailabilityStatus;
+    private String roomAvailabilityStatus;
 
     private BigDecimal rentPricePerNight;
 

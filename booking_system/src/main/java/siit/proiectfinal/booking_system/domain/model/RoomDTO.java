@@ -17,7 +17,7 @@ public class RoomDTO {
     private Integer roomNumber;
 
 //    @JsonManagedReference
-    private HotelDTO hotel;
+    private Integer hotelId;
 
     private Integer size;
     private Integer personCapacity;
