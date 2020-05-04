@@ -19,6 +19,6 @@ public class CountryDTO{
     private Integer id;
     private String name;
 
-    @JsonManagedReference
-    private Set<CityDTO> cities;
+//    @JsonIgnore
+//    private Set<CityDTO> cities;
 }

@@ -1,6 +1,7 @@
 package siit.proiectfinal.booking_system.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import siit.proiectfinal.booking_system.domain.entity.ReservationStatus;
 import javax.persistence.*;
@@ -18,7 +19,7 @@ public class ReservationDTO {
     private LocalDate checkOutDate;
     private CustomerDTO customer;
 
-    @JsonBackReference
+//    @JsonManagedReference
     private RoomAvailabilityDTO room;
 
     @Enumerated(EnumType.STRING)

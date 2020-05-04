@@ -39,6 +39,6 @@ public class CustomerDTO{
     private String email;
     private String phoneNumber;
 
-    @JsonIgnore
-    private List<ReservationDTO> reservations = new ArrayList<>();
+//    @JsonIgnore
+//    private List<ReservationDTO> reservations = new ArrayList<>();
 }

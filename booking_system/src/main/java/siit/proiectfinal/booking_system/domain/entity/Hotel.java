@@ -1,5 +1,6 @@
 package siit.proiectfinal.booking_system.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,6 +30,7 @@ public class Hotel {
     private City city;
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Room> rooms;
 
     @Column

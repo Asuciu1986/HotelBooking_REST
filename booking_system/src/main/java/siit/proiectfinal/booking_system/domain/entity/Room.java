@@ -1,5 +1,6 @@
 package siit.proiectfinal.booking_system.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,6 +36,7 @@ public class Room {
     private Integer personCapacity;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "room", orphanRemoval = true)
+    @JsonIgnore
     private List<RoomAvailability> availabilities;
 
 }

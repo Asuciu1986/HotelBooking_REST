@@ -16,13 +16,13 @@ public class RoomDTO {
     private Integer id;
     private Integer roomNumber;
 
-    @JsonBackReference
+//    @JsonManagedReference
     private HotelDTO hotel;
 
     private Integer size;
     private Integer personCapacity;
 
-    @JsonManagedReference
-    private List<RoomAvailabilityDTO> availabilities = new ArrayList<>();
+//    @JsonIgnore
+//    private List<RoomAvailabilityDTO> availabilities = new ArrayList<>();
 
 }

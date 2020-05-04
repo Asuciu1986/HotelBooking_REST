@@ -1,6 +1,7 @@
 package siit.proiectfinal.booking_system.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import java.time.LocalTime;
@@ -15,12 +16,12 @@ public class HotelDTO {
 
     private Integer id;
     private String name;
-
-    @JsonBackReference
+//
+//    @JsonManagedReference
     private CityDTO city;
 
-    @JsonManagedReference
-    private Set<RoomDTO> rooms;
+//    @JsonIgnore
+//    private Set<RoomDTO> rooms;
 
     private Integer stars;
     private String email;

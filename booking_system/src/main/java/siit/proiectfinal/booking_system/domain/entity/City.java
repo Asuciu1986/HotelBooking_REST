@@ -1,5 +1,6 @@
 package siit.proiectfinal.booking_system.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,5 +27,6 @@ public class City {
     private Country country;
 
     @OneToMany(mappedBy = "city",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Hotel> hotels;
 }

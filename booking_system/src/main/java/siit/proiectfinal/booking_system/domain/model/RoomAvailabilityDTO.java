@@ -23,7 +23,8 @@ public class RoomAvailabilityDTO{
 
     private BigDecimal rentPricePerNight;
 
-    @JsonBackReference
-    private RoomDTO room;
+////    @JsonManagedReference
+//    private RoomDTO room;
+    private Integer roomId;
 
 }

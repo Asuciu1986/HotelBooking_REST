@@ -1,5 +1,6 @@
 package siit.proiectfinal.booking_system.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -50,5 +51,6 @@ public class Customer{
     private String phoneNumber;
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     private List<Reservation> reservations = new ArrayList<>();
 }
